@@ -1,59 +1,184 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+A hotel room booking management system built with **Laravel**, featuring:
+- Room categories (Premium Deluxe, Super Deluxe, Standard Deluxe)
+- Dynamic pricing (weekend surcharge + discount for 3+ nights)
+- Real-time room availability (max 3 rooms per category per day)
+- Validation for booking dates, email, and phone
+- Thank You confirmation page with booking summary
+- Admin dashboard with booking stats
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+---
 
-## About Laravel
+## ⚙️ Requirements
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Before installing, make sure you have the following installed:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- PHP >= 8.1  
+- Composer  
+- MySQL or MariaDB  
+- Node.js & npm (for Laravel Mix/Vite assets if needed)  
+- Git (optional)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## 🚀 Installation Steps
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+### 1. Clone or Copy the Project
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+```bash
+git clone https://github.com/yourusername/hotel-booking-system.git
+cd hotel-booking-system
+Or, if you copied the files manually, just open the project folder in your terminal.
 
-## Laravel Sponsors
+2. Install Dependencies
+Install PHP dependencies:
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+bash
+Copy code
+composer install
+Install Node dependencies (optional, if you’re using frontend assets):
 
-### Premium Partners
+bash
+Copy code
+npm install
+3. Configure the Environment
+Duplicate .env.example and rename it to .env:
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+bash
+Copy code
+cp .env.example .env
+Now edit .env with your database credentials:
 
-## Contributing
+makefile
+Copy code
+APP_NAME="Hotel Booking System"
+APP_ENV=local
+APP_KEY=
+APP_DEBUG=true
+APP_URL=http://localhost:8000
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=hotel_booking
+DB_USERNAME=root
+DB_PASSWORD=
+4. Generate Application Key
+bash
+Copy code
+php artisan key:generate
+5. Run Database Migrations
+bash
+Copy code
+php artisan migrate
+This will create all necessary tables including:
 
-## Code of Conduct
+room_categories
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+bookings
 
-## Security Vulnerabilities
+daily_availabilities
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+6. (Optional) Seed Default Room Categories
+You can seed the 3 default categories (Premium Deluxe, Super Deluxe, Standard Deluxe):
 
-## License
+bash
+Copy code
+php artisan tinker
+Then run this inside Tinker:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+php
+Copy code
+use App\Models\RoomCategory;
+
+RoomCategory::insert([
+    ['name' => 'Premium Deluxe', 'base_price' => 12000],
+    ['name' => 'Super Deluxe', 'base_price' => 10000],
+    ['name' => 'Standard Deluxe', 'base_price' => 8000],
+]);
+exit;
+7. Run the Development Server
+bash
+Copy code
+php artisan serve
+The app will be available at:
+
+👉 http://localhost:8000
+
+📄 Admin Dashboard
+Visit /admin/dashboard to see booking statistics (total rooms, bookings, recent reservations, etc.).
+
+🧠 Booking Logic Summary
+3 Rooms per Category per Day
+
+Weekend Surcharge: +20% on Fridays & Saturdays
+
+Discount: 10% off total price for bookings ≥ 3 nights
+
+Availability: If 3 rooms already booked for a date, that category/date becomes unavailable
+
+Validations:
+
+Email must be valid format
+
+Phone: 10–15 digits
+
+Dates cannot be in the past
+
+to_date ≥ from_date
+
+📦 Folder Structure (Simplified)
+pgsql
+Copy code
+app/
+ ├─ Http/Controllers/
+ │   ├─ BookingController.php
+ │   └─ Admin/DashboardController.php
+ ├─ Models/
+ │   ├─ Booking.php
+ │   ├─ RoomCategory.php
+ │   └─ DailyAvailability.php
+resources/
+ ├─ views/
+ │   ├─ frontend/
+ │   │   ├─ layout.blade.php
+ │   │   ├─ booking/
+ │   │   │   ├─ create.blade.php
+ │   │   │   └─ thankyou.blade.php
+ │   └─ admin/dashboard.blade.php
+routes/
+ └─ web.php
+💡 Common Artisan Commands
+bash
+Copy code
+php artisan migrate:fresh       # Reset and re-run all migrations
+php artisan db:seed             # Run seeders (if added)
+php artisan route:list          # View all routes
+php artisan cache:clear         # Clear application cache
+🧰 Troubleshooting
+Problem	Possible Fix
+SQLSTATE[HY000] [1049] Unknown database	Make sure you created the database name in .env manually in phpMyAdmin
+500 Server Error	Check .env settings and file permissions
+Booking date mismatch	Ensure your local timezone matches project timezone (config/app.php or .env)
+
+📜 License
+This project is open-source and free to use for educational or personal projects.
+Attribution is appreciated but not required.
+
+Developed by: [Your Name]
+Framework: Laravel 10+
+Language: PHP 8+
+
+🎯 Enjoy your stay at the Hotel Booking System!
+
+yaml
+Copy code
+
+---
+
+Would you like me to include a **SQL seed file** (so you can import all room categories automatically instead of using Tinker)?
+
+
+
+
+
+
