@@ -1,3 +1,7 @@
+
+
+# 🏨 Laravel Hotel Booking System
+
 A hotel room booking management system built with **Laravel**, featuring:
 - Room categories (Premium Deluxe, Super Deluxe, Standard Deluxe)
 - Dynamic pricing (weekend surcharge + discount for 3+ nights)
@@ -24,21 +28,25 @@ Before installing, make sure you have the following installed:
 
 ### 1. Clone or Copy the Project
 
+```bash
 git clone https://github.com/Rakib2622/hotel-booking-task-rakibul-islam.git
 cd hotel-booking-system
+
 Or, if you copied the files manually, just open the project folder in your terminal.
 
 2. Install Dependencies
---Install PHP dependencies:
+Install PHP dependencies:
 composer install
 
---Install Node dependencies (optional, if you’re using frontend assets):
+Install Node dependencies (optional, if you’re using frontend assets):
 npm install
+
 
 3. Configure the Environment
 Duplicate .env.example and rename it to .env:
-Now edit .env with your database credentials:
+cp .env.example .env
 
+Now edit .env with your database credentials:
 APP_NAME="Hotel Booking System"
 APP_ENV=local
 APP_KEY=
@@ -52,22 +60,32 @@ DB_DATABASE=hotel_booking
 DB_USERNAME=root
 DB_PASSWORD=
 
+
 4. Generate Application Key
 php artisan key:generate
 
+
 5. Run Database Migrations
 php artisan migrate
-This will create all necessary tables, including:
+
+This will create all necessary tables including:
+
 
 room_categories
+
+
 bookings
+
+
 daily_availabilities
+
+
 
 6. (Optional) Seed Default Room Categories
 You can seed the 3 default categories (Premium Deluxe, Super Deluxe, Standard Deluxe):
 php artisan tinker
-Then run this inside Tinker:
 
+Then run this inside Tinker:
 use App\Models\RoomCategory;
 
 RoomCategory::insert([
@@ -77,37 +95,50 @@ RoomCategory::insert([
 ]);
 exit;
 
+
 7. Run the Development Server
-
 php artisan serve
-The app will be available at:
 
+The app will be available at:
 👉 http://localhost:8000
 
 📄 Admin Dashboard
 Visit /admin/dashboard to see booking statistics (total rooms, bookings, recent reservations, etc.).
 
 🧠 Booking Logic Summary
+
+
 3 Rooms per Category per Day
+
 
 Weekend Surcharge: +20% on Fridays & Saturdays
 
+
 Discount: 10% off total price for bookings ≥ 3 nights
+
 
 Availability: If 3 rooms already booked for a date, that category/date becomes unavailable
 
+
 Validations:
+
 
 Email must be valid format
 
+
 Phone: 10–15 digits
+
 
 Dates cannot be in the past
 
+
 to_date ≥ from_date
 
-📦 Folder Structure (Simplified)
 
+
+
+
+📦 Folder Structure (Simplified)
 app/
  ├─ Http/Controllers/
  │   ├─ BookingController.php
@@ -126,17 +157,17 @@ resources/
  │   └─ admin/dashboard.blade.php
 routes/
  └─ web.php
+
+
 💡 Common Artisan Commands
 php artisan migrate:fresh       # Reset and re-run all migrations
 php artisan db:seed             # Run seeders (if added)
 php artisan route:list          # View all routes
 php artisan cache:clear         # Clear application cache
 
+
 🧰 Troubleshooting
-Problem	Possible Fix
-SQLSTATE[HY000] [1049] Unknown database	Make sure you created the database name in .env manually in phpMyAdmin
-500 Server Error	Check .env settings and file permissions
-Booking date mismatch	Ensure your local timezone matches project timezone (config/app.php or .env)
+ProblemPossible FixSQLSTATE[HY000] [1049] Unknown databaseMake sure you created the database name in .env manually in phpMyAdmin500 Server ErrorCheck .env settings and file permissionsBooking date mismatchEnsure your local timezone matches project timezone (config/app.php or .env)
 
 📜 License
 This project is open-source and free to use for educational or personal projects.
@@ -147,5 +178,7 @@ Framework: Laravel 10+
 Language: PHP 8+
 
 🎯 Enjoy your stay at the Hotel Booking System!
+
+---
 
 Would you like me to include a **SQL seed file** (so you can import all room categories automatically instead of using Tinker)?
