@@ -24,8 +24,7 @@ Before installing, make sure you have the following installed:
 
 ### 1. Clone or Copy the Project
 
-```bash
-git clone https://github.com/yourusername/hotel-booking-system.git
+git clone https://github.com/Rakib2622/hotel-booking-task-rakibul-islam.git
 cd hotel-booking-system
 Or, if you copied the files manually, just open the project folder in your terminal.
 
