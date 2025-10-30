@@ -1,40 +1,48 @@
 @extends('admin.layout')
 
 @section('content')
-<h1 class="text-2xl font-bold mb-4">Admin Dashboard</h1>
+<h1 style="font-size:28px; font-weight:bold; margin-bottom:20px;">Admin Dashboard</h1>
 
-<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-    <div class="bg-blue-100 p-4 rounded shadow">
-        <h2 class="font-bold">Total Bookings</h2>
-        <p class="text-xl">{{ $totalBookings }}</p>
+<!-- Stats Cards -->
+<div style="display:flex; flex-wrap:wrap; gap:20px; margin-bottom:30px;">
+    <div style="flex:1; min-width:200px; background: linear-gradient(135deg, #3498db, #2980b9); color:#fff; padding:20px; border-radius:10px; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
+        <h2 style="font-weight:bold; font-size:16px;">Total Bookings</h2>
+        <p style="font-size:24px; margin-top:10px;">{{ $totalBookings }}</p>
     </div>
-    <div class="bg-green-100 p-4 rounded shadow">
-        <h2 class="font-bold">Total Rooms</h2>
-        <p class="text-xl">{{ $totalRooms }}</p>
+    <div style="flex:1; min-width:200px; background: linear-gradient(135deg, #2ecc71, #27ae60); color:#fff; padding:20px; border-radius:10px; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
+        <h2 style="font-weight:bold; font-size:16px;">Total Rooms</h2>
+        <p style="font-size:24px; margin-top:10px;">{{ $totalRooms }}</p>
+    </div>
+    <div style="flex:1; min-width:200px; background: linear-gradient(135deg, #e67e22, #d35400); color:#fff; padding:20px; border-radius:10px; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
+        <h2 style="font-weight:bold; font-size:16px;">Total Categories</h2>
+        <p style="font-size:24px; margin-top:10px;">{{ $totalCategories }}</p>
     </div>
 </div>
 
-<h2 class="text-xl font-bold mb-2">Recent Bookings</h2>
-<table class="w-full border">
-    <thead>
-        <tr class="bg-gray-200">
-            <th class="border px-2 py-1">ID</th>
-            <th class="border px-2 py-1">Name</th>
-            <th class="border px-2 py-1">Category</th>
-            <th class="border px-2 py-1">From</th>
-            <th class="border px-2 py-1">To</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach($recentBookings as $b)
-        <tr>
-            <td class="border px-2 py-1">{{ $b->id }}</td>
-            <td class="border px-2 py-1">{{ $b->name }}</td>
-            <td class="border px-2 py-1">{{ $b->category->name }}</td>
-            <td class="border px-2 py-1">{{ $b->from_date }}</td>
-            <td class="border px-2 py-1">{{ $b->to_date }}</td>
-        </tr>
-        @endforeach
-    </tbody>
-</table>
+<!-- Recent Bookings -->
+<h2 style="font-size:22px; font-weight:bold; margin-bottom:15px;">Recent Bookings</h2>
+<div style="overflow-x:auto; background:#fff; border-radius:10px; box-shadow:0 4px 10px rgba(0,0,0,0.05);">
+    <table style="width:100%; border-collapse:collapse;">
+        <thead>
+            <tr style="background:#ecf0f1;">
+                <th style="padding:10px; text-align:left;">ID</th>
+                <th style="padding:10px; text-align:left;">Name</th>
+                <th style="padding:10px; text-align:left;">Category</th>
+                <th style="padding:10px; text-align:left;">From</th>
+                <th style="padding:10px; text-align:left;">To</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($recentBookings as $b)
+            <tr style="border-bottom:1px solid #ddd; transition: background 0.2s;" onmouseover="this.style.background='#f1f1f1';" onmouseout="this.style.background='transparent';">
+                <td style="padding:10px;">{{ $b->id }}</td>
+                <td style="padding:10px;">{{ $b->name }}</td>
+                <td style="padding:10px;">{{ $b->category->name }}</td>
+                <td style="padding:10px;">{{ $b->from_date }}</td>
+                <td style="padding:10px;">{{ $b->to_date }}</td>
+            </tr>
+            @endforeach
+        </tbody>
+    </table>
+</div>
 @endsection

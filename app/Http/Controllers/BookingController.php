@@ -31,28 +31,30 @@ class BookingController extends Controller
         ]);
 
         $category = RoomCategory::findOrFail($request->room_category_id);
+
         $from = Carbon::parse($request->from_date);
         $to = Carbon::parse($request->to_date);
-        $nights = $to->diffInDays($from) + 1;
 
-        // Calculate total price
+        // Swap if from_date > to_date (safety)
+        if ($from->gt($to)) {
+            [$from, $to] = [$to, $from];
+        }
+
+        // Calculate total nights
+        $nights = $from->diffInDays($to) + 1;
+
+        // Calculate total base price with weekend surcharge
         $totalBasePrice = 0;
-        for ($date = $from; $date->lte($to); $date->addDay()) {
+        for ($date = clone $from; $date->lte($to); $date->addDay()) {
             $dayPrice = $category->base_price;
-
-            // Weekend surcharge (Friday=5, Saturday=6)
             if ($date->dayOfWeek == Carbon::FRIDAY || $date->dayOfWeek == Carbon::SATURDAY) {
-                $dayPrice += $dayPrice * 0.2;
+                $dayPrice *= 1.2; // 20% weekend surcharge
             }
-
             $totalBasePrice += $dayPrice;
         }
 
         // Apply 10% discount if booking 3+ nights
-        $finalPrice = $totalBasePrice;
-        if ($nights >= 3) {
-            $finalPrice = $totalBasePrice * 0.9;
-        }
+        $finalPrice = ($nights >= 3) ? $totalBasePrice * 0.9 : $totalBasePrice;
 
         // Check availability for each day
         for ($date = clone $from; $date->lte($to); $date->addDay()) {
@@ -62,7 +64,9 @@ class BookingController extends Controller
             );
 
             if ($availability->booked_rooms >= 3) {
-                return back()->withErrors(['availability' => 'No rooms available for ' . $category->name . ' on ' . $date->format('Y-m-d')]);
+                return back()->withErrors([
+                    'availability' => 'No rooms available for ' . $category->name . ' on ' . $date->format('Y-m-d')
+                ]);
             }
         }
 
@@ -74,8 +78,8 @@ class BookingController extends Controller
             'room_category_id' => $category->id,
             'from_date' => $from->format('Y-m-d'),
             'to_date' => $to->format('Y-m-d'),
-            'base_price' => $totalBasePrice,
-            'final_price' => $finalPrice,
+            'base_price' => round($totalBasePrice),
+            'final_price' => round($finalPrice),
             'status' => 'confirmed'
         ]);
 
@@ -128,67 +132,60 @@ class BookingController extends Controller
 
     // AJAX: Get available categories for selected dates
     public function getAvailableCategories(Request $request)
-{
-    $request->validate([
-        'from_date' => 'required|date',
-        'to_date' => 'required|date|after_or_equal:from_date',
-    ]);
+    {
+        $request->validate([
+            'from_date' => 'required|date',
+            'to_date' => 'required|date|after_or_equal:from_date',
+        ]);
 
-    $from = Carbon::parse($request->from_date);
-    $to = Carbon::parse($request->to_date);
+        $from = Carbon::parse($request->from_date);
+        $to = Carbon::parse($request->to_date);
 
-    $categories = RoomCategory::all()->map(function ($category) use ($from, $to) {
-        $total = 0;
-        $available = true;
+        $categories = RoomCategory::all()->map(function ($category) use ($from, $to) {
+            $total = 0;
+            $available = true;
 
-        for ($date = clone $from; $date->lte($to); $date->addDay()) {
-            $dayPrice = $category->base_price;
+            for ($date = clone $from; $date->lte($to); $date->addDay()) {
+                $dayPrice = $category->base_price;
+                if ($date->dayOfWeek == Carbon::FRIDAY || $date->dayOfWeek == Carbon::SATURDAY) {
+                    $dayPrice *= 1.2;
+                }
+                $total += $dayPrice;
 
-            // Weekend surcharge
-            if ($date->dayOfWeek == Carbon::FRIDAY || $date->dayOfWeek == Carbon::SATURDAY) {
-                $dayPrice += $dayPrice * 0.2;
+                $availability = DailyAvailability::where('room_category_id', $category->id)
+                    ->where('date', $date->format('Y-m-d'))
+                    ->first();
+
+                if ($availability && $availability->booked_rooms >= 3) {
+                    $available = false;
+                }
             }
 
-            $total += $dayPrice;
-
-            // Check availability
-            $availability = DailyAvailability::where('room_category_id', $category->id)
-                ->where('date', $date->format('Y-m-d'))
-                ->first();
-
-            if ($availability && $availability->booked_rooms >= 3) {
-                $available = false;
+            $nights = $from->diffInDays($to) + 1;
+            if ($nights >= 3) {
+                $total *= 0.9;
             }
-        }
 
-        // Apply discount
-        if (($to->diffInDays($from) + 1) >= 3) {
-            $total *= 0.9;
-        }
+            return [
+                'id' => $category->id,
+                'name' => $category->name,
+                'available' => $available,
+                'base_price' => $category->base_price,
+                'final_price' => round($total),
+            ];
+        });
 
-        return [
-            'id' => $category->id,
-            'name' => $category->name,
-            'available' => $available,
-            'base_price' => $category->base_price,
-            'final_price' => round($total),
-        ];
-    });
+        return response()->json($categories);
+    }
 
-    return response()->json($categories);
+    public function getBlockedDates(Request $request)
+    {
+        // Get all fully booked dates for all categories
+        $blockedDates = DailyAvailability::select('date')
+            ->groupBy('date')
+            ->havingRaw('SUM(booked_rooms) >= 9') // 3 rooms * 3 categories
+            ->pluck('date');
+
+        return response()->json($blockedDates);
+    }
 }
-
-public function getBlockedDates(Request $request)
-{
-    // Get all fully booked dates for all categories
-    $blockedDates = DailyAvailability::select('date')
-        ->groupBy('date')
-        ->havingRaw('SUM(booked_rooms) >= 9') // 3 rooms * 3 categories
-        ->pluck('date');
-
-    return response()->json($blockedDates);
-}
-
-
-}
-

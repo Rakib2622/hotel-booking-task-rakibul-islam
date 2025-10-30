@@ -1,11 +1,11 @@
 @extends('admin.layout')
 
 @section('content')
-<h1 class="text-2xl font-bold mb-4">Edit Room Category</h1>
+<h1 style="font-size:28px; font-weight:bold; margin-bottom:20px;">Edit Room Category</h1>
 
 @if ($errors->any())
-    <div class="bg-red-100 p-4 mb-4 rounded">
-        <ul class="list-disc pl-5 text-red-700">
+    <div style="background:#fde2e2; color:#b71c1c; padding:15px; margin-bottom:20px; border-radius:10px;">
+        <ul style="padding-left:20px;">
             @foreach ($errors->all() as $error)
                 <li>{{ $error }}</li>
             @endforeach
@@ -13,21 +13,31 @@
     </div>
 @endif
 
-<form action="{{ route('admin.room-categories.update', $roomCategory->id) }}" method="POST" class="bg-white p-6 rounded shadow">
+<form action="{{ route('admin.room-categories.update', $roomCategory->id) }}" method="POST" 
+      style="background:#fff; padding:25px; border-radius:12px; box-shadow:0 6px 15px rgba(0,0,0,0.1); max-width:500px; margin:auto;">
     @csrf
     @method('PUT')
 
-    <div class="mb-4">
-        <label class="block font-semibold mb-1">Category Name</label>
-        <input type="text" name="name" value="{{ old('name', $roomCategory->name) }}" class="w-full p-2 border rounded">
+    <div style="margin-bottom:20px;">
+        <label style="display:block; font-weight:bold; margin-bottom:5px;">Category Name</label>
+        <input type="text" name="name" value="{{ old('name', $roomCategory->name) }}" 
+               style="width:100%; padding:10px; border-radius:8px; border:1px solid #ccc;">
     </div>
 
-    <div class="mb-4">
-        <label class="block font-semibold mb-1">Base Price (BDT)</label>
-        <input type="number" name="base_price" value="{{ old('base_price', $roomCategory->base_price) }}" class="w-full p-2 border rounded">
+    <div style="margin-bottom:20px;">
+        <label style="display:block; font-weight:bold; margin-bottom:5px;">Base Price (BDT)</label>
+        <input type="number" name="base_price" value="{{ old('base_price', $roomCategory->base_price) }}" 
+               style="width:100%; padding:10px; border-radius:8px; border:1px solid #ccc;">
     </div>
 
-    <button type="submit" class="bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-800">Update</button>
-    <a href="{{ route('admin.room-categories.index') }}" class="ml-2 text-gray-600">Cancel</a>
+    <div style="display:flex; align-items:center; gap:10px;">
+        <button type="submit" 
+                style="background:#2980b9; color:#fff; padding:10px 20px; border-radius:8px; border:none; cursor:pointer; transition:0.3s;"
+                onmouseover="this.style.background='#2471a3';" onmouseout="this.style.background='#2980b9';">
+            Update
+        </button>
+        <a href="{{ route('admin.room-categories.index') }}" 
+           style="color:#7f8c8d; text-decoration:none; font-weight:bold;">Cancel</a>
+    </div>
 </form>
 @endsection
