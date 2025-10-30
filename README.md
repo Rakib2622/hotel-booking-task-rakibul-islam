@@ -30,26 +30,16 @@ cd hotel-booking-system
 Or, if you copied the files manually, just open the project folder in your terminal.
 
 2. Install Dependencies
-Install PHP dependencies:
-
-bash
-Copy code
+--Install PHP dependencies:
 composer install
-Install Node dependencies (optional, if you’re using frontend assets):
 
-bash
-Copy code
+--Install Node dependencies (optional, if you’re using frontend assets):
 npm install
+
 3. Configure the Environment
 Duplicate .env.example and rename it to .env:
-
-bash
-Copy code
-cp .env.example .env
 Now edit .env with your database credentials:
 
-makefile
-Copy code
 APP_NAME="Hotel Booking System"
 APP_ENV=local
 APP_KEY=
@@ -62,32 +52,23 @@ DB_PORT=3306
 DB_DATABASE=hotel_booking
 DB_USERNAME=root
 DB_PASSWORD=
+
 4. Generate Application Key
-bash
-Copy code
 php artisan key:generate
+
 5. Run Database Migrations
-bash
-Copy code
 php artisan migrate
-This will create all necessary tables including:
+This will create all necessary tables, including:
 
 room_categories
-
 bookings
-
 daily_availabilities
 
 6. (Optional) Seed Default Room Categories
 You can seed the 3 default categories (Premium Deluxe, Super Deluxe, Standard Deluxe):
-
-bash
-Copy code
 php artisan tinker
 Then run this inside Tinker:
 
-php
-Copy code
 use App\Models\RoomCategory;
 
 RoomCategory::insert([
@@ -96,9 +77,9 @@ RoomCategory::insert([
     ['name' => 'Standard Deluxe', 'base_price' => 8000],
 ]);
 exit;
+
 7. Run the Development Server
-bash
-Copy code
+
 php artisan serve
 The app will be available at:
 
@@ -127,8 +108,7 @@ Dates cannot be in the past
 to_date ≥ from_date
 
 📦 Folder Structure (Simplified)
-pgsql
-Copy code
+
 app/
  ├─ Http/Controllers/
  │   ├─ BookingController.php
@@ -148,12 +128,11 @@ resources/
 routes/
  └─ web.php
 💡 Common Artisan Commands
-bash
-Copy code
 php artisan migrate:fresh       # Reset and re-run all migrations
 php artisan db:seed             # Run seeders (if added)
 php artisan route:list          # View all routes
 php artisan cache:clear         # Clear application cache
+
 🧰 Troubleshooting
 Problem	Possible Fix
 SQLSTATE[HY000] [1049] Unknown database	Make sure you created the database name in .env manually in phpMyAdmin
@@ -164,21 +143,10 @@ Booking date mismatch	Ensure your local timezone matches project timezone (confi
 This project is open-source and free to use for educational or personal projects.
 Attribution is appreciated but not required.
 
-Developed by: [Your Name]
+Developed by: Rakibul Islam
 Framework: Laravel 10+
 Language: PHP 8+
 
 🎯 Enjoy your stay at the Hotel Booking System!
 
-yaml
-Copy code
-
----
-
 Would you like me to include a **SQL seed file** (so you can import all room categories automatically instead of using Tinker)?
-
-
-
-
-
-
